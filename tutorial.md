@@ -79,7 +79,7 @@ gcloud services enable cloudbuild.googleapis.com container.googleapis.com artifa
 
 **GUI**: [API ライブラリ](https://console.cloud.google.com/apis/library?project={{project-id}})
 
-## **4. gcloud コマンドラインツール設定 - リージョン、ゾーン
+## **4. gcloud コマンドラインツール設定 - リージョン、ゾーン**
 
 コンピュートリソースを作成するデフォルトのリージョン、ゾーンとして、東京 (asia-northeast1/asia-northeast1-c）を指定します。
 
@@ -125,21 +125,20 @@ GKE 以下のコマンドを実行し、GKE Autopilot クラスタを作成し�
 
 クラスタの作成には10分〜20分程度の時間がかかります。
 
-## サンプル
-Now that your cluster is up and running, the first step is deploying the sample app, the [Online Boutique microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo). This is a microservices demo with several services, spanning various language platforms. Check out the  manifests in `demo-01-deploy-sample-app`.
+## サンプルアプリケーションのデプロイ
+クラスタの作成が完了しましたら、サンプルアプリケーションをデプロイします。 [Online Boutique microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo). このアプリケーションは、EC サイトをモチーフにしたマイクロサービスアプリケーションとなっています。kuberenetes のマニフェストについては、`demo-01-deploy-sample-app` フォルダのファイルをご確認ください。
 
-### Deploy the app services:
+### **1. マニフェストの適用**
+以下のコマンドで、マニフェストの適用を行ってください。
 ```bash
 kubectl apply -f demo-01-deploy-sample-app/
 ```
-Note that we have not yet provisioned node pools or nodes, as Autopilot will do that for you.
-
-Monitor the rollout progress of both pods and nodes:
+以下のコマンドで、現在の Pod および Node のステータスを取得を継続して行います。
 ```bash
 watch -d kubectl get pods,nodes
 ```
 
-(Use Ctrl-C to exit the watch command)
+Ctrl-C でコマンドの実行を終了します。
 
 ### Inspect the nodes
 
