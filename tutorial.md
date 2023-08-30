@@ -8,28 +8,124 @@
 
 # GKE 道場 入門編
 
-## Select a project
+## Google Cloud プロジェクトの設定、確認
 
-<walkthrough-project-setup billing="true"></walkthrough-project-setup>
+### **1. 対象の Google Cloud プロジェクトを設定**
 
-Click "Start" when you are done.
-
-## Set project
+ハンズオンを行う Google Cloud プロジェクトのプロジェクト ID を環境変数に設定し、以降の手順で利用できるようにします。 (右辺の [PROJECT_ID] を手動で置き換えてコマンドを実行します)
 
 ```bash
-gcloud config set project <walkthrough-project-name/>
+export PROJECT_ID=[PROJECT_ID]
 ```
 
-## Create a cluster
+`プロジェクト ID` は [ダッシュボード](https://console.cloud.google.com/home/dashboard) に進み、左上の **プロジェクト情報** から確認します。
 
-Run this script to enable the GKE API and create a GKE Autopilot cluster named "ap-demo-cluster":
+### **2. プロジェクトの課金が有効化されていることを確認する**
+
+```bash
+gcloud beta billing projects describe ${PROJECT_ID} | grep billingEnabled
+```
+
+**Cloud Shell の承認** という確認メッセージが出た場合は **承認** をクリックします。
+
+出力結果の `billingEnabled` が **true** になっていることを確認してください。**false** の場合は、こちらのプロジェクトではハンズオンが進められません。別途、課金を有効化したプロジェクトを用意し、本ページの #1 の手順からやり直してください。
+
+## **環境準備**
+
+<walkthrough-tutorial-duration duration=10></walkthrough-tutorial-duration>
+
+最初に、ハンズオンを進めるための環境準備を行います。
+
+下記の設定を進めていきます。
+
+- gcloud コマンドラインツール設定
+- Google Cloud 機能（API）有効化設定
+
+## **gcloud コマンドラインツール**
+
+Google Cloud は、コマンドライン（CLI）、GUI から操作が可能です。ハンズオンでは主に CLI を使い作業を行いますが、GUI で確認する URL も合わせて掲載します。
+
+### **1. gcloud コマンドラインツールとは?**
+
+gcloud コマンドライン インターフェースは、Google Cloud でメインとなる CLI ツールです。このツールを使用すると、コマンドラインから、またはスクリプトや他の自動化により、多くの一般的なプラットフォーム タスクを実行できます。
+
+たとえば、gcloud CLI を使用して、以下のようなものを作成、管理できます。
+
+- Google Compute Engine 仮想マシン
+- Google Kubernetes Engine クラスタ
+- Google Cloud SQL インスタンス
+
+**ヒント**: gcloud コマンドラインツールについての詳細は[こちら](https://cloud.google.com/sdk/gcloud?hl=ja)をご参照ください。
+
+### **2. gcloud から利用する Google Cloud のデフォルトプロジェクトを設定**
+
+gcloud コマンドでは操作の対象とするプロジェクトの設定が必要です。操作対象のプロジェクトを設定します。
+
+```bash
+gcloud config set project ${PROJECT_ID}
+```
+
+承認するかどうかを聞かれるメッセージがでた場合は、`承認` ボタンをクリックします。
+
+### **3. ハンズオンで利用する GCP の API を有効化する**
+
+Google Cloud では利用したい機能ごとに、有効化を行う必要があります。
+ここでは、以降のハンズオンで利用する機能を事前に有効化しておきます。
+
+
+```bash
+gcloud services enable cloudbuild.googleapis.com container.googleapis.com artifactregistry.googleapis.com
+```
+
+**GUI**: [API ライブラリ](https://console.cloud.google.com/apis/library?project={{project-id}})
+
+## **4. gcloud コマンドラインツール設定 - リージョン、ゾーン
+
+コンピュートリソースを作成するデフォルトのリージョン、ゾーンとして、東京 (asia-northeast1/asia-northeast1-c）を指定します。
+
+```bash
+gcloud config set compute/region asia-northeast1 && gcloud config set compute/zone asia-northeast1-c
+```
+
+## **参考: Cloud Shell の接続が途切れてしまったときは?**
+
+一定時間非アクティブ状態になる、またはブラウザが固まってしまったなどで `Cloud Shell` が切れてしまう、またはブラウザのリロードが必要になる場合があります。その場合は以下の対応を行い、チュートリアルを再開してください。
+
+### **1. チュートリアル資材があるディレクトリに移動する**
+
+```bash
+cd ~/gke-autopilot-examples
+```
+
+### **2. チュートリアルを開く**
+
+```bash
+teachme tutorial.md
+```
+
+### **3. プロジェクト ID を設定する**
+
+```bash
+export PROJECT_ID=[PROJECT_ID]
+```
+
+### **4. gcloud のデフォルト設定**
+
+```bash
+gcloud config set project ${PROJECT_ID} && gcloud config set compute/region asia-northeast1 && gcloud config set compute/zone asia-northeast1-c
+```
+
+
+## GKE Autopilot クラスタの作成
+
+GKE 以下のコマンドを実行し、GKE Autopilot クラスタを作成します。
 ```bash
 . ./bootstrap/init.sh
 ```
 
-Cluster creation can take a few minutes. Grab a coffee and come back in a few mins.
+クラスタの作成には10分〜20分程度の時間がかかります。
 
-## Demo 01 - Deploying the sample app
+## サンプル
 Now that your cluster is up and running, the first step is deploying the sample app, the [Online Boutique microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo). This is a microservices demo with several services, spanning various language platforms. Check out the  manifests in `demo-01-deploy-sample-app`.
 
 ### Deploy the app services:
