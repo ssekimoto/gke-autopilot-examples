@@ -1,12 +1,12 @@
 <walkthrough-metadata>
-  <meta name="title" content="GKE Autopilot configuraiton examples" />
-  <meta name="description" content="Guide for helping you get up and running with Google Kubernetes Engine Autopilot mode" />
+  <meta name="title" content="GKE Dojo" />
+  <meta name="description" content="Hands-on GKE" />
   <meta name="component_id" content="103" />
 </walkthrough-metadata>
 
 <walkthrough-disable-features toc></walkthrough-disable-features>
 
-# GKE Autopilot demos guided walkthrough
+# GKE 道場 入門編
 
 ## Select a project
 
