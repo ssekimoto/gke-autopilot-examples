@@ -12,6 +12,6 @@ gcloud services enable container.googleapis.com
 # Create demo cluster
 echo "creating ap-demo-cluster..."
 gcloud container --project "$PROJECT_ID" clusters create-auto "ap-demo-cluster" \
---region "us-west1" --release-channel "regular"
+--region "asia-northeast1" --release-channel "regular"
 
 echo "All done, proceed to the next step - demos!"
