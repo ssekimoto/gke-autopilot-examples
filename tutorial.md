@@ -194,6 +194,7 @@ Lab01 はこちらで完了となります。
 手動または HPA 経由でスケールアップすると、新しい Pod がプロビジョニングされますが、予備容量がない場合は、新しいノードがプロビジョニングされるために遅延が発生する可能性があります。
 Autopilot モードで迅速にスケールアップするためには、Balloon Pod を利用します。
 
+### **1. Priority Class と Balloon Pod の作成
 まずは、Priority の定義リソースである Priority Class と Balloon Pod を作成します。
 
 ```bash
@@ -209,6 +210,7 @@ watch -d kubectl get pods,nodes
 ```
 数分後、すべての Pod と Node の Status が Running となることを確認できたら、 `Ctrl-C` でコマンドの実行を終了します。
 
+### **2. 迅速なスケールアウトの確認
 
 次に frontend の pod を 1 から 8 へスケールアウトします。
 
@@ -228,3 +230,32 @@ watch -n 1 kubectl get pods,nodes
 Lab02 はこちらで完了となります。
 
 ### **Ex01.Google Cloud サービスによる CI/CD**
+
+### **1. 対象のアプリケーション確認
+
+ローカルにある python アプリケーションを出力して確認してください。
+こちらはテキストを出力するシンプルな Flask アプリケーションです。
+
+```bash
+cat ex01-cicd/app.py
+```
+
+### **2. レポジトリ作成
+
+以下のコマンドで Flask アプリケーションのコンテナイメージを配置するための Artifact Registry のレポジトリを作成します。
+```bash
+gcloud artifacts repositories create gke-handson --repository-format=docker --location=asia-northeast-1
+```
+
+### **3. Cloud Build によるコンテナイメージの作成
+
+Cloud Build を利用して、クラウド上でコンテナイメージのビルドを行います。
+Cloud Build に含まれている Buildpacks により Dockerfile を書かなくとも、アプリケーションの構成を認識して適切なコンテナイメージを作成することができます。
+
+以下のコマンドで、ビルドを実行します。
+
+```bash
+gcloud builds submit
+```
+
+### **3. Cloud Build によるコンテナイメージの作成
