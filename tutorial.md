@@ -116,7 +116,7 @@ gcloud config set project ${PROJECT_ID} && gcloud config set compute/region asia
 ```
 
 
-## GKE Autopilot クラスタの作成
+## Lab00.GKE Autopilot クラスタの作成
 
 GKE 以下のコマンドを実行し、GKE Autopilot クラスタを作成します。
 ```bash
@@ -140,7 +140,15 @@ watch -d kubectl get pods,nodes
 
 数分後、すべての Pod の Status が Running となることを確認できたら、 `Ctrl-C` でコマンドの実行を終了します。
 
-### **2. 外部 IP アドレスの予約**
+### **2. 証明書の作成**
+
+アプリケーションの公開に利用する SSL 証明書を発行します。
+使用するドメインは、この後の工程で利用する`nip.io`を利用します。
+
+gcloud compute ssl-certificates create gke-gateway-cert --domains=*.nip.io --global
+
+
+### **3. 外部 IP アドレスの予約**
 
 アプリケーションの外部公開用 IP アドレスを予約します。
 
@@ -148,7 +156,7 @@ watch -d kubectl get pods,nodes
 gcloud compute addresses create gatewayip --global --ip-version IPV4
 ```
 
-### **3. Gateway マニフェストの適用**
+### **4. Gateway マニフェストの適用**
 
 前の手順で予約した IP アドレスに合わせて、マニフェストファイルの編集が必要です。
 以下にコマンド例を示しますが、こちらはコピーせずに、必ず IP アドレス部分を編集して実行してください。
@@ -165,7 +173,7 @@ kubectl apply -f gateway.yaml
 kubectl apply -f httproute.yaml
 ```
 
-### **4. Demo サイトの確認
+### **5. Demo サイトの確認
 Gateway の設定が完了するまで数分かかります。数分後、以下のコマンドでアプリケーションの URL を確認します。
 確認した URL をコピーして Chrome などの Web ブラウザのアドレスバーに貼り付けアプリケーションを確認します。
 
@@ -178,3 +186,10 @@ kubectl get httproutes
 admin_@cloudshell:~ (projectname)$ kubectl get httproutes
 NAME             HOSTNAMES                  AGE
 frontend-route   ["xxx-xxx-xxx-xxx.nip.io"]   43h
+```
+
+### **Lab02.Baroon Pod の利用による高速なスケーリング**
+
+手動または HPA 経由でスケールアップすると、新しい Pod がプロビジョニングされますが、予備容量がない場合は、新しいノードがプロビジョニングされるために遅延が発生する可能性があります。
+Autopilot モードで迅速にスケールアップするために、
+
