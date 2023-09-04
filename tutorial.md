@@ -227,3 +227,4 @@ watch -n 1 kubectl get pods,nodes
 
 Lab02 はこちらで完了となります。
 
+### **Ex01.Google Cloud サービスによる CI/CD**
