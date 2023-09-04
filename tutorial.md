@@ -187,9 +187,43 @@ admin_@cloudshell:~ (projectname)$ kubectl get httproutes
 NAME             HOSTNAMES                  AGE
 frontend-route   ["xxx-xxx-xxx-xxx.nip.io"]   43h
 ```
+Lab01 はこちらで完了となります。
 
-### **Lab02.Baroon Pod の利用による高速なスケーリング**
+### **Lab02.Balloon Pod の利用による高速なスケーリング**
 
 手動または HPA 経由でスケールアップすると、新しい Pod がプロビジョニングされますが、予備容量がない場合は、新しいノードがプロビジョニングされるために遅延が発生する可能性があります。
-Autopilot モードで迅速にスケールアップするために、
+Autopilot モードで迅速にスケールアップするためには、Balloon Pod を利用します。
+
+まずは、Priority の定義リソースである Priority Class と Balloon Pod を作成します。
+
+```bash
+kubectl apply -f demo-02-spare-capacity-balloon/balloon-priority.yaml 
+kubectl apply -f demo-02-spare-capacity-balloon/balloon-deploy.yaml 
+```
+
+Balloon Pod の作成により、ノードがスケールすることを watch コマンドで動的に確認します。
+完了までに数分かかります。
+
+```bash
+watch -d kubectl get pods,nodes
+```
+数分後、すべての Pod と Node の Status が Running となることを確認できたら、 `Ctrl-C` でコマンドの実行を終了します。
+
+
+次に frontend の pod を 1 から 8 へスケールアウトします。
+
+```bash
+kubectl scale --replicas=8 deployment frontend
+```
+
+Balloon Pod を先に作成していたため、目的の Pod のスケールアウトはスピーディに完了します。一方　Balloon Pod　は優先度が低いため、ノードから削除され、さらなるノードのスケールアウトが始まります。Balloon Pod は追加されたノードに配置されます。
+以下のコマンドで一連の流れを確認しましょう。
+
+```bash
+watch -n 1 kubectl get pods,nodes
+```
+
+数分後、すべての Pod と Node の Status が Running となることを確認できたら、 `Ctrl-C` でコマンドの実行を終了します。
+
+Lab02 はこちらで完了となります。
 
