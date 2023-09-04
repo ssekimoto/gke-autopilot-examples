@@ -126,7 +126,7 @@ GKE 以下のコマンドを実行し、GKE Autopilot クラスタを作成し�
 クラスタの作成には10分〜20分程度の時間がかかります。
 
 ## Lab01.サンプルアプリケーションのデプロイ
-クラスタの作成が完了しましたら、サンプルアプリケーションをデプロイします。 [Online Boutique microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo). このアプリケーションは、EC サイトをモチーフにしたマイクロサービスアプリケーションとなっています。kuberenetes のマニフェストについては、`demo-01-deploy-sample-app` フォルダのファイルをご確認ください。
+クラスタの作成が完了しましたら、サンプルアプリケーションをデプロイします。 [Online Boutique microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo)アプリケーションは、EC サイトをモチーフにしたマイクロサービスアプリケーションとなっています。kuberenetes のマニフェストについては、`demo-01-deploy-sample-app` フォルダのファイルをご確認ください。
 
 ### **1. Deployment/Service マニフェストの適用**
 以下のコマンドで、マニフェストの適用を行ってください。
@@ -145,12 +145,21 @@ watch -d kubectl get pods,nodes
 アプリケーションの外部公開用 IP アドレスを予約します。
 
 ```bash
-kubectl apply -f demo-01-deploy-sample-app/
+gcloud compute addresses create gatewayip --global --ip-version IPV4
 ```
 
 ### **3. Gateway マニフェストの適用**
 
-Gateway マニフェストを摘用し、アプリケーションを外部公開します。
+前の手順で予約した IP アドレスに合わせて、マニフェストファイルの編集が必要です。
+以下にコマンド例を示しますが、こちらはコピーせずに、必ず IP アドレス部分を編集して実行してください。
+
+```bash
+sed -i 's/x.x.x.x/192.168.0.1/g gateway.yaml' 
+sed -i 's/x-x-x-x.nip.io/192-168-0-1.nip.io/g httproute.yaml' 
+```
+
+編集した Gateway マニフェストを適用し、アプリケーションを外部公開します。
+
 ```bash
 kubectl apply -f gateway.yaml
 kubectl apply -f httproute.yaml
