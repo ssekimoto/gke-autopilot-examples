@@ -290,7 +290,7 @@ cat ex01-cicd/app.py
 
 以下のコマンドで Flask アプリケーションのコンテナイメージを配置するための Artifact Registry のレポジトリを作成します。
 ```bash
-gcloud artifacts repositories create gke-dojo --repository-format=docker --location=asia-northeast-1
+gcloud artifacts repositories create gke-dojo --repository-format=docker --location=asia-northeast1
 ```
 
 ### **3. Cloud Build によるコンテナイメージの作成**
