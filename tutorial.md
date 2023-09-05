@@ -131,7 +131,7 @@ gcloud container --project "$PROJECT_ID" clusters create-auto "gke-dojo-cluster"
 
 <walkthrough-tutorial-duration duration=20></walkthrough-tutorial-duration>
 
-クラスタの作成が完了しましたら、サンプルアプリケーションをデプロイします。 [Online Boutique microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo)アプリケーションは、EC サイトをモチーフにしたマイクロサービスアプリケーションとなっています。kuberenetes のマニフェストについては、`demo-01-deploy-sample-app` フォルダのファイルをご確認ください。
+クラスタの作成が完了しましたら、サンプルアプリケーションをデプロイします。 [Online Boutique microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo)アプリケーションは、EC サイトをモチーフにしたマイクロサービスアプリケーションとなっています。kuberenetes のマニフェストについては、`lab-01-deploy-sample-app` フォルダのファイルをご確認ください。
 
 ### **1. Deployment/Service マニフェストの適用**
 以下のコマンドで、マニフェストの適用を行ってください。
