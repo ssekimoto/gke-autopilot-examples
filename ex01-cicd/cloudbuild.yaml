@@ -1,5 +1,4 @@
 steps:
 - name: 'gcr.io/k8s-skaffold/pack'
   entrypoint: 'pack'
-  args: ['build', '--builder=gcr.io/buildpacks/builder', '--publish', 'asia-northeast-1/$PROJECT_ID/gke-dojo/:v1']
-  
+  args: ['build', '--builder=gcr.io/buildpacks/builder', '--publish', 'asia-northeast1/$PROJECT_ID/gke-dojo/:v1']
