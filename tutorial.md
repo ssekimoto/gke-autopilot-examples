@@ -1,6 +1,6 @@
 <walkthrough-metadata>
-  <meta name="title" content="GKE Dojo" />
-  <meta name="description" content="Hands-on GKE" />
+  <meta name="title" content="GKE Dojo Basic" />
+  <meta name="description" content="Hands-on Dojo GKE Basic" />
   <meta name="component_id" content="103" />
 </walkthrough-metadata>
 
@@ -74,7 +74,7 @@ Google Cloud では利用したい機能ごとに、有効化を行う必要が�
 
 
 ```bash
-gcloud services enable cloudbuild.googleapis.com container.googleapis.com artifactregistry.googleapis.com
+gcloud services enable cloudbuild.googleapis.com container.googleapis.com artifactregistry.googleapis.com clouddeploy.googleapis.com
 ```
 
 **GUI**: [API ライブラリ](https://console.cloud.google.com/apis/library?project={{project-id}})
@@ -94,7 +94,7 @@ gcloud config set compute/region asia-northeast1 && gcloud config set compute/zo
 ### **1. チュートリアル資材があるディレクトリに移動する**
 
 ```bash
-cd ~/gke-autopilot-examples
+cd ~/gke-handson2023
 ```
 
 ### **2. チュートリアルを開く**
@@ -120,7 +120,8 @@ gcloud config set project ${PROJECT_ID} && gcloud config set compute/region asia
 
 GKE 以下のコマンドを実行し、GKE Autopilot クラスタを作成します。
 ```bash
-. ./bootstrap/init.sh
+gcloud container --project "$PROJECT_ID" clusters create-auto "gke-dojo-cluster" \
+--region "asia-northeast1" --release-channel "regular"
 ```
 
 クラスタの作成には10分〜20分程度の時間がかかります。
@@ -131,7 +132,7 @@ GKE 以下のコマンドを実行し、GKE Autopilot クラスタを作成し�
 ### **1. Deployment/Service マニフェストの適用**
 以下のコマンドで、マニフェストの適用を行ってください。
 ```bash
-kubectl apply -f demo-01-deploy-sample-app/
+kubectl apply -f lab-01-deploy-sample-app/
 ```
 以下のコマンドで、現在の Pod および Node のステータスを取得を継続して行います。
 ```bash
@@ -145,8 +146,9 @@ watch -d kubectl get pods,nodes
 アプリケーションの公開に利用する SSL 証明書を発行します。
 使用するドメインは、この後の工程で利用する`nip.io`を利用します。
 
+```bash
 gcloud compute ssl-certificates create gke-gateway-cert --domains=*.nip.io --global
-
+```
 
 ### **3. 外部 IP アドレスの予約**
 
@@ -162,15 +164,15 @@ gcloud compute addresses create gatewayip --global --ip-version IPV4
 以下にコマンド例を示しますが、こちらはコピーせずに、必ず IP アドレス部分を編集して実行してください。
 
 ```bash
-sed -i 's/x.x.x.x/192.168.0.1/g gateway.yaml' 
-sed -i 's/x-x-x-x.nip.io/192-168-0-1.nip.io/g httproute.yaml' 
+sed -i 's/x.x.x.x/192.168.0.1/g lab-01-gateway/gateway.yaml' 
+sed -i 's/x-x-x-x.nip.io/192-168-0-1.nip.io/g lab-01-gateway/httproute.yaml' 
 ```
 
 編集した Gateway マニフェストを適用し、アプリケーションを外部公開します。
 
 ```bash
-kubectl apply -f gateway.yaml
-kubectl apply -f httproute.yaml
+kubectl apply -f lab-01-gateway/gateway.yaml
+kubectl apply -f lab-01-gateway/httproute.yaml
 ```
 
 ### **5. Demo サイトの確認
@@ -198,8 +200,8 @@ Autopilot モードで迅速にスケールアップするためには、Balloon
 まずは、Priority の定義リソースである Priority Class と Balloon Pod を作成します。
 
 ```bash
-kubectl apply -f demo-02-spare-capacity-balloon/balloon-priority.yaml 
-kubectl apply -f demo-02-spare-capacity-balloon/balloon-deploy.yaml 
+kubectl apply -f lab-02-spare-capacity-balloon/balloon-priority.yaml 
+kubectl apply -f lab-02-spare-capacity-balloon/balloon-deploy.yaml 
 ```
 
 Balloon Pod の作成により、ノードがスケールすることを watch コマンドで動的に確認します。
@@ -231,6 +233,16 @@ Lab02 はこちらで完了となります。
 
 ### **Ex01.Google Cloud サービスによる CI/CD**
 
+### **0. ２つ目のクラスター作成
+後続で使う 2 つ目のクラスターを作成しておきます。
+
+```bash
+gcloud container --project "$PROJECT_ID" clusters create-auto "gke-dojo-cluster-prod" \
+--region "asia-northeast1" --release-channel "regular"
+```
+このクラスタは、本番環境向けクラスタとして扱います。
+開発環境クラスタで動作を確認したアプリケーションを本番環境にデプロイするという流れを Cloud Build と Cloud Deploy で実装します。
+
 ### **1. 対象のアプリケーション確認
 
 ローカルにある python アプリケーションを出力して確認してください。
@@ -244,7 +256,7 @@ cat ex01-cicd/app.py
 
 以下のコマンドで Flask アプリケーションのコンテナイメージを配置するための Artifact Registry のレポジトリを作成します。
 ```bash
-gcloud artifacts repositories create gke-handson --repository-format=docker --location=asia-northeast-1
+gcloud artifacts repositories create gke-dojo --repository-format=docker --location=asia-northeast-1
 ```
 
 ### **3. Cloud Build によるコンテナイメージの作成
@@ -255,7 +267,60 @@ Cloud Build に含まれている Buildpacks により Dockerfile を書かな�
 以下のコマンドで、ビルドを実行します。
 
 ```bash
-gcloud builds submit
+gcloud builds submit --ex01-cicd/cloudbuild.yaml
+```
+ビルドの進捗は、以下のリンクから確認可能です。
+https://console.cloud.google.com/cloud-build/dashboard
+
+
+### **4. Cloud Deploy による デプロイ
+
+前の手順で用意した Flask アプリケーションを Kubernetes マニフェストを確認します。
+
+```bash
+cat ex01-cicd/kubernetes/deployment.yaml
 ```
 
-### **. Cloud Build によるコンテナイメージの作成
+```bash
+cat ex01-cicd/kubernetes/service.yaml
+```
+
+続いて Cloud Deploy にてターゲットとなる GKE クラスタにデプロイするための定義ファイルを確認します。
+```bash
+cat ex01-cicd/clouddeploy.yaml
+```
+
+このファイルを利用して、アプリケーションをデプロイするためのパイプラインを用意します。
+```bash
+gcloud deploy apply --file=clouddeploy.yaml --region asia-northeast1 --project=PROJECT_ID
+```
+
+Cloud Deploy ではテンプレートとなる Kubernetes のマニフェストを環境に合わせてレンダリングするために、Skaffold を利用します。
+ここでは、コンテナイメージを今回のアプリケーションに書き換えるのみのため、シンプルなコンフィグを作成しています。
+
+```bash
+cat ex01-cicd/skaffold.yaml
+```
+それでは、デプロイを開始します。以下のコマンドでリリースを作成します。
+
+```bash
+gcloud deploy releases create initial-release-1 \
+    --delivery-pipeline=hello-world-app \
+    --region=us-central1 \
+    --source=ex01-cicd/ \
+    --images=gke-dojo=asia-northeast-1-docker.pkg.dev/$PROJECT_ID/gke-dojo/:v1
+```
+数分の経過後、[Cloud Deploy コンソール](https://console.cloud.google.com/deploy)に最初のリリースの詳細が表示され、それが最初のクラスタに正常にデプロイされたことが確認できます。
+
+[Kubernetes Engine コンソール](https://console.cloud.google.com/kubernetes)に移動して、アプリケーションのエンドポイントを探します。
+左側のメニューバーより Services & Ingress を選択し、gke-dojo-svc という名前のサービスを見つけます。
+Endpoints 列に IP アドレスが表示されるため、それをクリックして、アプリケーションが期待どおりに動作していることを確認します。
+
+ステージングでテストしたので、本番環境に昇格する準備が整いました。
+[Cloud Deploy コンソール](https://console.cloud.google.com/deploy)に戻ります。
+すると、Promote という青いリンクが表示されています。Promote release を選択し、本番環境へのデプロイを実施します。
+
+先ほどの手順と同様に本番環境のアプリケーションの動作を確認できましたら、本ハンズオンは終了です。
+
+### Configurations
+これで、GKE での基本的なアプリケーションのデプロイと操作、Autopilot Mode におけるスケールの方法、CI/CD の操作を学ぶことができました。引き続き応用編もお楽しみ下さい。
