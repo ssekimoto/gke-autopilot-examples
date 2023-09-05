@@ -189,6 +189,7 @@ IP_ADDR=$(gcloud compute addresses list --format='value(ADDRESS)' --filter="NAME
 DOMAIN="${IP_ADDR//./-}.nip.io"
 gcloud compute ssl-certificates create gke-gateway-cert --domains="$DOMAIN" --global
 ```
+
 ### **4. Gateway マニフェストの適用**
 
 前の手順で予約した IP アドレスに合わせて、マニフェストファイルの編集が必要です。
