@@ -135,26 +135,21 @@ gcloud container --project "$PROJECT_ID" clusters create-auto "gke-dojo-cluster"
 
 ### **1. Deployment/Service マニフェストの適用**
 以下のコマンドで、マニフェストの適用を行ってください。
+実行時 Warning が複数出力されますが、デプロイ自体には問題ございません。
+
 ```bash
 kubectl apply -f lab-01-deploy-sample-app/
 ```
 以下のコマンドで、現在の Pod および Node のステータスを取得を継続して行います。
+Pod の作成に伴い、Node が複製され、Pod がデプロイされる様子が確認できます。
+デプロイには3-5分程度の時間がかかります。
 ```bash
 watch -d kubectl get pods,nodes
 ```
 
 数分後、すべての Pod の Status が Running となることを確認できたら、 `Ctrl-C` でコマンドの実行を終了します。
 
-### **2. 証明書の作成**
-
-アプリケーションの公開に利用する SSL 証明書を発行します。
-使用するドメインは、この後の工程で利用する`nip.io`を利用します。
-
-```bash
-gcloud compute ssl-certificates create gke-gateway-cert --domains=*.nip.io --global
-```
-
-### **3. 外部 IP アドレスの予約**
+### **2. 外部 IP アドレスの予約**
 
 アプリケーションの外部公開用 IP アドレスを予約します。
 
@@ -162,6 +157,34 @@ gcloud compute ssl-certificates create gke-gateway-cert --domains=*.nip.io --glo
 gcloud compute addresses create gatewayip --global --ip-version IPV4
 ```
 
+取得した IP アドレスを確認します。
+
+```bash
+gcloud compute addresses list
+```
+
+出力例
+```bash
+NAME: gatewayip
+ADDRESS/RANGE: [こちらに IPアドレスが記載されます]
+TYPE: EXTERNAL
+PURPOSE: 
+NETWORK: 
+REGION: 
+SUBNET: 
+STATUS: RESERVED
+```
+
+### **3. 証明書の作成**
+
+アプリケーションの公開に利用する SSL 証明書を発行します。
+使用するドメインは、この後の工程で利用する`nip.io`を利用します。
+このコマンドは、そのまま実行せず `x-x-x-x` を前の手順で予約した IP に書き換えて実行下さい。
+出力される `x.x.x.x`そのままではなくコマンド上に記載する形式は`x-x-x-x` である点にご注意ください。
+
+```bash
+gcloud compute ssl-certificates create gke-gateway-cert --domains=x-x-x-x.nip.io --global
+```
 ### **4. Gateway マニフェストの適用**
 
 前の手順で予約した IP アドレスに合わせて、マニフェストファイルの編集が必要です。
