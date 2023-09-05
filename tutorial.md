@@ -179,20 +179,24 @@ STATUS: RESERVED
 
 アプリケーションの公開に利用する SSL 証明書を発行します。
 使用するドメインは、この後の工程で利用する`nip.io`を利用します。
-このコマンドは、そのまま実行せず `x-x-x-x` を前の手順で予約した IP に書き換えて実行下さい。
-出力される `x.x.x.x`そのままではなくコマンド上に記載する形式は`x-x-x-x` である点にご注意ください。
+`nip.io`はサブドメインに記載した任意の IP アドレスに合わせたレコードを返す DNS サービスです。
+今回はこのサービスを利用して、簡易的にドメインを用意します。
+本番環境においては、別途ドメインを用意して利用ください。 
+以下のコマンドで先ほど取得した IP アドレスに合わせたドメインで証明書を作成します。
 
 ```bash
-gcloud compute ssl-certificates create gke-gateway-cert --domains=x-x-x-x.nip.io --global
+IP_ADDR=$(gcloud compute addresses list --format='value(ADDRESS)' --filter="NAME:gatewayip")
+DOMAIN="${IP_ADDR//./-}.nip.io"
+gcloud compute ssl-certificates create gke-gateway-cert --domains="$DOMAIN" --global
 ```
 ### **4. Gateway マニフェストの適用**
 
 前の手順で予約した IP アドレスに合わせて、マニフェストファイルの編集が必要です。
-以下にコマンド例を示しますが、こちらはコピーせずに、必ず IP アドレス部分を編集して実行してください。
+以下のコマンドのコマンドを実行してください。
 
 ```bash
-sed -i 's/x.x.x.x/192.168.0.1/g lab-01-gateway/gateway.yaml' 
-sed -i 's/x-x-x-x.nip.io/192-168-0-1.nip.io/g lab-01-gateway/httproute.yaml' 
+sed -i "s/x.x.x.x/$IP_ADDR/g" lab-01-gateway/gateway.yaml 
+sed -i "s/x-x-x-x.nip.io/$DOMAIN/g" lab-01-gateway/httproute.yaml
 ```
 
 編集した Gateway マニフェストを適用し、アプリケーションを外部公開します。
