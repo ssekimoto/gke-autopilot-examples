@@ -175,7 +175,7 @@ kubectl apply -f lab-01-gateway/gateway.yaml
 kubectl apply -f lab-01-gateway/httproute.yaml
 ```
 
-### **5. Demo サイトの確認
+### **5. Demo サイトの確認**
 Gateway の設定が完了するまで数分かかります。数分後、以下のコマンドでアプリケーションの URL を確認します。
 確認した URL をコピーして Chrome などの Web ブラウザのアドレスバーに貼り付けアプリケーションを確認します。
 
@@ -191,12 +191,12 @@ frontend-route   ["xxx-xxx-xxx-xxx.nip.io"]   43h
 ```
 Lab01 はこちらで完了となります。
 
-### **Lab02.Balloon Pod の利用による高速なスケーリング**
+## **Lab02.Balloon Pod の利用による高速なスケーリング**
 
 手動または HPA 経由でスケールアップすると、新しい Pod がプロビジョニングされますが、予備容量がない場合は、新しいノードがプロビジョニングされるために遅延が発生する可能性があります。
 Autopilot モードで迅速にスケールアップするためには、Balloon Pod を利用します。
 
-### **1. Priority Class と Balloon Pod の作成
+### **1. Priority Class と Balloon Pod の作成**
 まずは、Priority の定義リソースである Priority Class と Balloon Pod を作成します。
 
 ```bash
@@ -212,7 +212,7 @@ watch -d kubectl get pods,nodes
 ```
 数分後、すべての Pod と Node の Status が Running となることを確認できたら、 `Ctrl-C` でコマンドの実行を終了します。
 
-### **2. 迅速なスケールアウトの確認
+### **2. 迅速なスケールアウトの確認**
 
 次に frontend の pod を 1 から 8 へスケールアウトします。
 
@@ -231,9 +231,9 @@ watch -n 1 kubectl get pods,nodes
 
 Lab02 はこちらで完了となります。
 
-### **Ex01.Google Cloud サービスによる CI/CD**
+## **Ex01.Google Cloud サービスによる CI/CD**
 
-### **0. ２つ目のクラスター作成
+### **0. ２つ目のクラスター作成**
 後続で使う 2 つ目のクラスターを作成しておきます。
 
 ```bash
@@ -243,7 +243,7 @@ gcloud container --project "$PROJECT_ID" clusters create-auto "gke-dojo-cluster-
 このクラスタは、本番環境向けクラスタとして扱います。
 開発環境クラスタで動作を確認したアプリケーションを本番環境にデプロイするという流れを Cloud Build と Cloud Deploy で実装します。
 
-### **1. 対象のアプリケーション確認
+### **1. 対象のアプリケーション確認**
 
 ローカルにある python アプリケーションを出力して確認してください。
 こちらはテキストを出力するシンプルな Flask アプリケーションです。
@@ -252,14 +252,14 @@ gcloud container --project "$PROJECT_ID" clusters create-auto "gke-dojo-cluster-
 cat ex01-cicd/app.py
 ```
 
-### **2. レポジトリ作成
+### **2. レポジトリ作成**
 
 以下のコマンドで Flask アプリケーションのコンテナイメージを配置するための Artifact Registry のレポジトリを作成します。
 ```bash
 gcloud artifacts repositories create gke-dojo --repository-format=docker --location=asia-northeast-1
 ```
 
-### **3. Cloud Build によるコンテナイメージの作成
+### **3. Cloud Build によるコンテナイメージの作成**
 
 Cloud Build を利用して、クラウド上でコンテナイメージのビルドを行います。
 Cloud Build に含まれている Buildpacks により Dockerfile を書かなくとも、アプリケーションの構成を認識して適切なコンテナイメージを作成することができます。
@@ -273,7 +273,7 @@ gcloud builds submit --ex01-cicd/cloudbuild.yaml
 https://console.cloud.google.com/cloud-build/dashboard
 
 
-### **4. Cloud Deploy による デプロイ
+### **4. Cloud Deploy による デプロイ**
 
 前の手順で用意した Flask アプリケーションを Kubernetes マニフェストを確認します。
 
@@ -322,5 +322,5 @@ Endpoints 列に IP アドレスが表示されるため、それをクリック
 
 先ほどの手順と同様に本番環境のアプリケーションの動作を確認できましたら、本ハンズオンは終了です。
 
-### Configurations
+## Configurations!
 これで、GKE での基本的なアプリケーションのデプロイと操作、Autopilot Mode におけるスケールの方法、CI/CD の操作を学ぶことができました。引き続き応用編もお楽しみ下さい。
