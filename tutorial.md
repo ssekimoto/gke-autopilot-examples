@@ -303,9 +303,7 @@ Cloud Build に含まれている Buildpacks により Dockerfile を書かな�
 ```bash
 gcloud builds submit --config ex01-cicd/cloudbuild.yaml
 ```
-ビルドの進捗は、以下のリンクから確認可能です。
-https://console.cloud.google.com/cloud-build/dashboard
-
+最終的に`STATUS: SUCCESS`と表示されましたら、ビルド成功です。
 
 ### **4. Cloud Deploy による デプロイ**
 
@@ -326,7 +324,7 @@ cat ex01-cicd/clouddeploy.yaml
 
 このファイルを利用して、アプリケーションをデプロイするためのパイプラインを用意します。
 ```bash
-gcloud deploy apply --file=clouddeploy.yaml --region asia-northeast1 --project=PROJECT_ID
+gcloud deploy apply --file=ex01-cicd/clouddeploy.yaml --region asia-northeast1 --project=$PROJECT_ID
 ```
 
 Cloud Deploy ではテンプレートとなる Kubernetes のマニフェストを環境に合わせてレンダリングするために、Skaffold を利用します。
@@ -339,10 +337,10 @@ cat ex01-cicd/skaffold.yaml
 
 ```bash
 gcloud deploy releases create initial-release-1 \
-    --delivery-pipeline=hello-world-app \
-    --region=us-central1 \
+    --delivery-pipeline=gke-dojo \
+    --region=asia-northeast1 \
     --source=ex01-cicd/ \
-    --images=gke-dojo=asia-northeast-1-docker.pkg.dev/$PROJECT_ID/gke-dojo/:v1
+    --images=gke-dojo-app=asia-northeast-1-docker.pkg.dev/$PROJECT_ID/gke-dojo/gke-dojo-app:v1
 ```
 数分の経過後、[Cloud Deploy コンソール](https://console.cloud.google.com/deploy)に最初のリリースの詳細が表示され、それが最初のクラスタに正常にデプロイされたことが確認できます。
 
