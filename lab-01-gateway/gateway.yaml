@@ -11,7 +11,7 @@ spec:
       tls:
         mode: Terminate
         options:
-          networking.gke.io/pre-shared-certs: gke-gateway-cert
+          networking.gke.io/pre-shared-certs: gke-dojo-cert
   addresses:
     - type: NamedAddress
       value: gatewayip
