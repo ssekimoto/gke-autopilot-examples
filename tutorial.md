@@ -117,6 +117,7 @@ gcloud config set project ${PROJECT_ID} && gcloud config set compute/region asia
 
 
 ## Lab00.GKE Autopilot クラスタの作成
+<walkthrough-tutorial-duration duration=20></walkthrough-tutorial-duration>
 
 GKE 以下のコマンドを実行し、GKE Autopilot クラスタを作成します。
 ```bash
@@ -127,6 +128,9 @@ gcloud container --project "$PROJECT_ID" clusters create-auto "gke-dojo-cluster"
 クラスタの作成には10分〜20分程度の時間がかかります。
 
 ## Lab01.サンプルアプリケーションのデプロイ
+
+<walkthrough-tutorial-duration duration=20></walkthrough-tutorial-duration>
+
 クラスタの作成が完了しましたら、サンプルアプリケーションをデプロイします。 [Online Boutique microservices demo](https://github.com/GoogleCloudPlatform/microservices-demo)アプリケーションは、EC サイトをモチーフにしたマイクロサービスアプリケーションとなっています。kuberenetes のマニフェストについては、`demo-01-deploy-sample-app` フォルダのファイルをご確認ください。
 
 ### **1. Deployment/Service マニフェストの適用**
@@ -192,6 +196,8 @@ frontend-route   ["xxx-xxx-xxx-xxx.nip.io"]   43h
 Lab01 はこちらで完了となります。
 
 ## **Lab02.Balloon Pod の利用による高速なスケーリング**
+<walkthrough-tutorial-duration duration=10></walkthrough-tutorial-duration>
+
 
 手動または HPA 経由でスケールアップすると、新しい Pod がプロビジョニングされますが、予備容量がない場合は、新しいノードがプロビジョニングされるために遅延が発生する可能性があります。
 Autopilot モードで迅速にスケールアップするためには、Balloon Pod を利用します。
@@ -232,6 +238,7 @@ watch -n 1 kubectl get pods,nodes
 Lab02 はこちらで完了となります。
 
 ## **Ex01.Google Cloud サービスによる CI/CD**
+<walkthrough-tutorial-duration duration=30></walkthrough-tutorial-duration>
 
 ### **0. ２つ目のクラスター作成**
 後続で使う 2 つ目のクラスターを作成しておきます。
