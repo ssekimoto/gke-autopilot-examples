@@ -301,7 +301,7 @@ Cloud Build に含まれている Buildpacks により Dockerfile を書かな�
 以下のコマンドで、ビルドを実行します。
 
 ```bash
-gcloud builds submit --ex01-cicd/cloudbuild.yaml
+gcloud builds submit --config ex01-cicd/cloudbuild.yaml
 ```
 ビルドの進捗は、以下のリンクから確認可能です。
 https://console.cloud.google.com/cloud-build/dashboard
