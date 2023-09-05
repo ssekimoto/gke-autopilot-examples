@@ -322,6 +322,11 @@ cat ex01-cicd/kubernetes/service.yaml
 cat ex01-cicd/clouddeploy.yaml
 ```
 
+以下のコマンドで `clouddeploy.yaml` 内の`PROJECT_ID`を実際の環境変数へ置き換えます。
+```bash
+sed -i 's/PROJECT_ID/'"$PROJECT_ID"'/g' ex01-cicd/clouddeploy.yaml
+```
+
 このファイルを利用して、アプリケーションをデプロイするためのパイプラインを用意します。
 ```bash
 gcloud deploy apply --file=ex01-cicd/clouddeploy.yaml --region asia-northeast1 --project=$PROJECT_ID
