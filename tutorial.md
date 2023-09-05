@@ -195,7 +195,6 @@ gcloud compute ssl-certificates create gke-gateway-cert --domains="$DOMAIN" --gl
 以下のコマンドのコマンドを実行してください。
 
 ```bash
-sed -i "s/x.x.x.x/$IP_ADDR/g" lab-01-gateway/gateway.yaml 
 sed -i "s/x-x-x-x.nip.io/$DOMAIN/g" lab-01-gateway/httproute.yaml
 ```
 

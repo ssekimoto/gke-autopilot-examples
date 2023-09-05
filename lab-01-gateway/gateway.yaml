@@ -14,4 +14,4 @@ spec:
           networking.gke.io/pre-shared-certs: gke-gateway-cert
   addresses:
     - type: NamedAddress
-      value: x.x.x.x
+      value: gatewayip
