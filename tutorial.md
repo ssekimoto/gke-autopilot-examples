@@ -258,4 +258,4 @@ Cloud Build に含まれている Buildpacks により Dockerfile を書かな�
 gcloud builds submit
 ```
 
-### **3. Cloud Build によるコンテナイメージの作成
+### **. Cloud Build によるコンテナイメージの作成
