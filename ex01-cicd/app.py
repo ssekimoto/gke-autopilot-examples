@@ -8,7 +8,7 @@ def index():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>GKE Handson 2023</title>
+        <title>GKE Dojo Handson 2023</title>
         <style>
             body {
                 display: flex;
@@ -24,7 +24,7 @@ def index():
     </head>
     <body>
         <div>
-            Welcome to <span style="border-bottom: 3px solid #61dafb;">gke-handson 2023</span>
+            Welcome to <span style="border-bottom: 3px solid #61dafb;">gke-dojo 2023</span>
         </div>
     </body>
     </html>
